@@ -19,9 +19,9 @@ Feel free to add more details as necessary.
 ## Documented Issues
 
 - Issue 1:
-  - Description:
-  - Found by:
-  - Reproducible:
+  - Description: Typo in copy, incorrect pluralization. Features items vs Featured items
+  - Found by: observation while automating
+  - Reproducible: yes. Open base URL and observe features items section. 
 
 - Issue 2:
   - Description:

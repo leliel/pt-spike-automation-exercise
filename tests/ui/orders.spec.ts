@@ -1,21 +1,22 @@
 import { test, expect } from '@playwright/test';
+import { HomePage } from '../../automationExerciseModel/homepage';
 
 
 test('Register during checkout', async ({ page }) => {
   await page.goto('');
+  const home = new HomePage(page);
 
-  // Expect a title "to contain" a substring.
+  // Expect a title "to contain" Automation Exercise.
   await expect(page).toHaveTitle(/Automation Exercise/);
 
-//    await page.
-});
+  //add the "Blue Top" to cart
+  await home.getAddToCartButton("Blue Top").click();
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  //Expect that the Added dialog will become visible
+  await expect(page.getByText("your product has been added to cart")).toBeVisible();
+  await expect(home.getContinueShoppingButton()).toBeVisible();
+  await expect(home.getContinueShoppingButton()).toBeEnabled();
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
+  await home.getViewCartLink().click();
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
 });
