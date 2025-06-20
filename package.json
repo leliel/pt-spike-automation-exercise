@@ -2,8 +2,8 @@
   "name": "pt-spike-automation-exercise",
   "packageManager": "yarn@4.9.2",
   "scripts": {
-    "lint": "eslint -c eslint.config.mjs ./tests",
-    "test": "playwright test",
+    "lint": "npx eslint -c eslint.config.mjs ./tests",
+    "test": " npx playwright test",
     "prepare": "husky install"
   },
   "devDependencies": {
