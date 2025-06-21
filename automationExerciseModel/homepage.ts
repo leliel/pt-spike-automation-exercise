@@ -6,11 +6,9 @@ export class HomePage{
     constructor(page: Page) {
         this.page = page;
     }
- 
-    getAddToCartButton(filterText: string): Locator {
-        return this.page.getByRole("listitem")
-            .filter({hasText: filterText})
-            .getByRole("link", {name: "Add to Cart"})
+
+    getAddToCartButton(): Locator {
+        return this.page.locator('.overlay-content > .btn').first();
     }
 
     getContinueShoppingButton(): Locator {
