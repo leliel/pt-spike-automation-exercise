@@ -13,6 +13,10 @@ export async function clickViewCartLink(page: Page): Promise<void> {
     await page.getByRole("link", {name: "View Cart"}).click();
 }
 
+export async function clickCartLink(page: Page): Promise<void> {
+    await page.getByRole("link", {name: "Cart"}).click();
+}
+
 export async function clickDeleteAccountButton(page: Page): Promise<void> {
     await page.getByRole('link', { name: 'Delete Account' }).click();
 }

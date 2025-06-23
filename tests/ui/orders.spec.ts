@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import {faker} from '@faker-js/faker';
 import { createRandomUser, getNameWithTitle } from '../../automationExerciseFuntions/userGenerator';
 import { clickSignUp, createUser, fillAddress, fillBirthDate, fillEmail, fillFirstNaame, fillLastname, fillMobile, fillName, fillPassword, selectTitle } from '../../automationExerciseFuntions/pageFillers/signup';
-import { addProductToCart, clickDeleteAccountButton, clickViewCartLink } from '../../automationExerciseFuntions/pageFillers/homepage';
+import { addProductToCart, clickCartLink, clickDeleteAccountButton, clickViewCartLink } from '../../automationExerciseFuntions/pageFillers/homepage';
 import { locateAddressBlock, verifyAddress } from '../../automationExerciseFuntions/pageVerifiers/order';
 import { clickContinue } from '../../automationExerciseFuntions/pageFillers/order';
  
@@ -55,7 +55,7 @@ test('Register during checkout', async ({ page }) => {
   
   await expect(page.getByText(`Logged in as ${user.userName}`)).toBeVisible();
   
-  await clickViewCartLink(page);
+  await clickCartLink(page);
   await page.getByText("Proceed To Checkout").click();
 
   const deliveryLocator = locateAddressBlock(page, user.title, true);
@@ -78,4 +78,5 @@ test('Register during checkout', async ({ page }) => {
 
   await clickContinue(page);
   await clickDeleteAccountButton(page);
+  await clickContinue(page);
 });
