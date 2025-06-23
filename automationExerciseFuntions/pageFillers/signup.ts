@@ -22,7 +22,7 @@ export async function fillPassword(page: Page, pass: string): Promise<void> {
 }
 
 export async function fillBirthDate(page: Page, birthDate: Date): Promise<void> {
-    await page.getByTestId('days').selectOption(birthDate.toLocaleString("default", {day: "2-digit"}));
+    await page.getByTestId('days').selectOption(birthDate.toLocaleString("default", {day: "numeric"}));
     await page.getByTestId('months').selectOption(birthDate.toLocaleString('default', {month: "long"}));
     await page.getByTestId('years').selectOption(birthDate.toLocaleString('default', {year: "numeric"}));
 }
