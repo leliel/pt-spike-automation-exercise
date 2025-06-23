@@ -8,4 +8,5 @@ node_modules/
 # Yarn
 /.yarn
 
-#vscode
+# Lets not have secrets in the repo
+.env

@@ -12,7 +12,7 @@
 ## Comments
 
 - Improvement 1:
-  - Description:
+  - Description: test.automationexercise.com appears to be non-existent. I get NXDOMAIN from DNS.
 
 - Feedback 1:
   - Description:

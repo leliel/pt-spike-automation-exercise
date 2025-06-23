@@ -1,23 +1,24 @@
 import { test, expect } from '@playwright/test';
-import { HomePage } from '../../automationExerciseModel/homepage';
-import { createRandomUser } from '../../automationExerciseModel/userGenerator';
+import {faker} from '@faker-js/faker';
+import { createRandomUser, getNameWithTitle } from '../../automationExerciseFuntions/userGenerator';
+import { clickSignUp, createUser, fillAddress, fillBirthDate, fillEmail, fillFirstNaame, fillLastname, fillMobile, fillName, fillPassword, selectTitle } from '../../automationExerciseFuntions/pageFillers/signup';
+import { addProductToCart, clickDeleteAccountButton, clickViewCartLink } from '../../automationExerciseFuntions/pageFillers/homepage';
+import { locateAddressBlock, verifyAddress } from '../../automationExerciseFuntions/pageVerifiers/order';
+import { clickContinue } from '../../automationExerciseFuntions/pageFillers/order';
  
 test('Register during checkout', async ({ page }) => {
   await page.goto('');
-  const home = new HomePage(page);
 
   // Expect a title "to contain" Automation Exercise.
   await expect(page).toHaveTitle(/Automation Exercise/);
 
   //add the "Blue Top" to cart
-  await page.getByText("Blue Top").first().hover(); //Hover here forces the actual element to be added to the DOM.
-  await home.getAddToCartButton().click();
+  await addProductToCart(page, "Blue Top");
 
   //Expect that the Added dialog will become visible
   await expect(page.getByText("your product has been added to cart")).toBeVisible();
-  await expect(home.getContinueShoppingButton()).toBeVisible();
 
-  await home.getViewCartLink().click();
+  await clickViewCartLink(page);
   await expect(page.getByText("Blue Top")).toBeVisible();
   await expect(page.getByText("Proceed To Checkout")).toBeVisible();
 
@@ -33,24 +34,48 @@ test('Register during checkout', async ({ page }) => {
   await expect(page.getByText("New User Signup!")).toBeVisible();
 
   const user = createRandomUser();
-  await page.getByRole("textbox", {name: "Name"}).fill(user.userName);
-  await page.getByPlaceholder("Email Address").nth(1).fill(user.email);
-  await page.getByRole("button", {name: "signup"}).click();
 
-  await page.getByRole("radio", {name: user.title}).click();
-  await page.getByRole("textbox" , {name: "Password"}).fill(user.password);
-  await page.locator('#days').selectOption(user.birthDate.toLocaleString("default", {day: "2-digit"}));
-  await page.locator('#months').selectOption(user.birthDate.toLocaleString('default', {month: "long"}));
-  await page.locator("#years").selectOption(user.birthDate.toLocaleString('default', {year: "numeric"}));
+  await fillName(page, user.userName);
+  await fillEmail(page, user.email)
+  await clickSignUp(page);
 
-  await page.getByRole('textbox', { name: 'First name *' }).fill(user.firstName);
-  await page.getByRole('textbox', { name: 'Last name' }).fill(user.lastName);
-  await page.getByRole('textbox', { name: 'Address *' }).fill(user.streetAddress);
-  await page.getByLabel("Country").selectOption(user.country);
-  await page.getByRole('textbox', {name: 'state'}).fill(user.state);
-  await page.getByRole('textbox', {name: "city"}).fill(user.city);
-  await page.getByRole('textbox', {name: 'Zipcode'}).fill(user.zip);
-  await page.getByRole('textbox', {name: 'mobile number'}).fill(user.mobileNumber);
+  await selectTitle(page, user.title);
+  await fillPassword(page, user.password);
+  await fillBirthDate(page, user.birthDate);
+  await fillFirstNaame(page, user.firstName);
+  await fillLastname(page, user.lastName);
+  await fillAddress(page, user.address);
+  await fillMobile(page, user.mobileNumber);
+  await createUser(page);
 
-  await page.getByRole('button', {name: 'Create Account'}).click();
+  await expect(page.getByText("Account Created")).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Continue' })).toBeVisible();
+
+  await page.getByRole('link', { name: 'Continue' }).click();
+  
+  await expect(page.getByText(`Logged in as ${user.userName}`)).toBeVisible();
+  
+  await clickViewCartLink(page);
+  await page.getByText("Proceed To Checkout").click();
+
+  const deliveryLocator = locateAddressBlock(page, user.title, true);
+  await verifyAddress(deliveryLocator, user.address, getNameWithTitle(user));
+
+  const billingLocator = locateAddressBlock(page, user.title, false);
+  await verifyAddress(billingLocator, user.address, getNameWithTitle(user));
+
+  await page.locator('textarea[name="message"]').fill(faker.lorem.sentences());
+  await page.getByRole('link', { name: 'Place Order' }).click();
+
+  await page.getByTestId('name-on-card').fill(`${user.firstName} ${user.lastName}`);
+  await page.getByTestId('card-number').fill(user.creditCard.ccNumber);
+  await page.getByTestId('cvc').fill(user.creditCard.cvc);
+  await page.getByTestId('expiry-month').fill(user.creditCard.expiration.toLocaleDateString('default', {month: "2-digit"}));
+  await page.getByTestId('expiry-year').fill(user.creditCard.expiration.toLocaleString('default', {year: 'numeric'}));
+
+  await page.getByRole('button', { name: 'Pay and Confirm Order' }).click();
+  await expect(page.getByText('Order placed!')).toBeVisible();
+
+  await clickContinue(page);
+  await clickDeleteAccountButton(page);
 });
